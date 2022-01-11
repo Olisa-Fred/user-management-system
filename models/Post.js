@@ -21,8 +21,8 @@ postSchema.set('toJSON', {
     versionKey: false,
     transform: function (doc, ret) {
         delete ret._id;
-        delete ret.dateCreated;
-        delete ret.dateUpdated;
+        delete ret.createdAt;
+        delete ret.updatedAt;
     }
 });
 

@@ -12,14 +12,8 @@ const postSchema = new mongoose.Schema({
         type: String,
         required: [true, "Please add a body"]
     },
-    dateCreated: {
-        type: Date,
-        default: Date.now
-    },
-    dateUpdated: {
-        type: Date,
-        default: Date.now
-    }
+}, {
+    timestamps: true,
 });
 
 postSchema.set('toJSON', {

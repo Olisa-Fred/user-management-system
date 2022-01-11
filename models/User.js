@@ -33,10 +33,8 @@ const userSchema = new Schema({
     accessToken: {
         type: String
     },
-    dateCreated: {
-        type: Date,
-        default: Date.now
-    }
+},{
+    timestamps: true,
 });
 
 userSchema.set('toJSON', {

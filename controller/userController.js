@@ -17,7 +17,7 @@ module.exports = {
     createRegularUser: async (req, res) => {
         try {
            if(await User.findOne({email: req.body.email})){
-               res.status(400).send(`User with email ${req.body.email} already exists`);
+               return res.status(400).send(`User with email ${req.body.email} already exists`);
            }
 
            const user = new User(req.body);
@@ -37,7 +37,7 @@ module.exports = {
     createAuthorizedUser: async (req, res) => {
         try {
            if(await User.findOne({email: req.body.email})){
-               res.status(400).send(`User with email ${req.body.email} already exists`);
+               return res.status(400).send(`User with email ${req.body.email} already exists`);
            }
 
            const user = new User(req.body);
@@ -66,11 +66,10 @@ module.exports = {
                                                       "token": accessToken});
                       
            }else{
-                res.status(400).send(`Incorrect password or email`);
+                return res.status(400).send(`Incorrect password or email`);
            }
             
         } catch (error) {
-            console.log(error);
             res.status(500).json({error});
         }
     },

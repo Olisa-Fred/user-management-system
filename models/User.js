@@ -6,11 +6,16 @@ const validateEmail = (email) => {
 };
 
 const userSchema = new Schema({
-    name: {
+    firstname: {
         type: String,
         required: true,
         trim: true,
     }, 
+    lastname: {
+        type: String,
+        required: true,
+        trim: true,
+    },
     email: {
         type: String,
         trim: true,
@@ -37,11 +42,23 @@ const userSchema = new Schema({
     timestamps: true,
 });
 
+userSchema.virtual('fullname')
+    .get(function() {
+    return this.firstname + ' ' + this.lastname;
+    })
+    .set(function(name) {
+        var split = name.split(' ');
+        this.firstname = split[0];
+        this.lastname = split[1];
+    })
+
 userSchema.set('toJSON', {
     virtuals: true,
     versionKey: false,
     transform: function (doc, ret) {
         delete ret._id;
+        delete ret.id;
+        delete ret.accessToken;
         delete ret.password;
         delete ret.createdAt;
         delete ret.updatedAt;

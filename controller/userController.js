@@ -28,7 +28,7 @@ module.exports = {
             const accessToken = createAccessToken(user._id, user.email);
             user.accessToken = accessToken;
             await user.save();
-            res.status(200).send(`${user.name} is successfully registered`);
+            res.status(200).send(`${user.fullname} is successfully registered`);
         } catch (error) {
             res.status(500).json({error});
         }
@@ -48,7 +48,8 @@ module.exports = {
             const accessToken = createAccessToken(user._id, user.email);
             user.accessToken = accessToken;
             await user.save();
-            res.status(200).send(`${user.name} is successfully registered`);
+
+            res.status(200).send(`${user.fullname} is successfully registered`);
         } catch (error) {
             res.status(500).json({error});
         }

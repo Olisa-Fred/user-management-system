@@ -13,7 +13,7 @@ app.use(express.json());
 //app.use(userVerified());
 app.use('/api/v1/user', authRoutes);
 
-const port = 3040;
+const port = 3050;
 const start = async () =>{
     try {
         await connectDB(process.env.DB_CONNECT);

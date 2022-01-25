@@ -64,6 +64,7 @@ module.exports = {
                 await User.findByIdAndUpdate(user._id, { accessToken });
                 res.header('auth-token', accessToken).json({
                                                       "message":"Login successful",
+                                                      "user": user,
                                                       "token": accessToken});
                       
            }else{

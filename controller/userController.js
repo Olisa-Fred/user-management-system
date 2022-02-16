@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs');
 const User = require('../models/User');
 const Post = require('../models/Post');
+const mail = require('../middleware/mailsender');
 require('dotenv').config()
 const {createAccessToken} = require('../config/token');
 
@@ -17,7 +18,7 @@ module.exports = {
     createRegularUser: async (req, res) => {
         try {
            if(await User.findOne({email: req.body.email})){
-               return res.status(400).send(`User with email ${req.body.email} already exists`);
+               return res.status(400).json({"message": `User with email ${req.body.email} already exists`});
            }
 
            const user = new User(req.body);
@@ -28,7 +29,13 @@ module.exports = {
             const accessToken = createAccessToken(user._id, user.email);
             user.accessToken = accessToken;
             await user.save();
-            res.status(200).send(`${user.fullname} is successfully registered`);
+            var text = `Dear ${user.fullname}! \n\n` +  `Your account has been successfully created`;
+            await mail(user.email, "Account Creation", text);
+            res.header('auth-token', accessToken);
+            return res.status(200).json({"message": `${user.fullname} is successfully registered`,
+                                  "user": user,
+                                    });
+            
         } catch (error) {
             res.status(500).json({error});
         }
@@ -37,7 +44,7 @@ module.exports = {
     createAuthorizedUser: async (req, res) => {
         try {
            if(await User.findOne({email: req.body.email})){
-               return res.status(400).send(`User with email ${req.body.email} already exists`);
+               return res.status(400).json({"message": `User with email ${req.body.email} already exists`});
            }
 
            const user = new User(req.body);
@@ -48,8 +55,12 @@ module.exports = {
             const accessToken = createAccessToken(user._id, user.email);
             user.accessToken = accessToken;
             await user.save();
-
-            res.status(200).send(`${user.fullname} is successfully registered`);
+            var text = `Dear ${user.fullname}! \n\n` +  `Your account has been successfully created`;
+            await mail(user.email, "Account Creation", text);
+            res.header('auth-token', accessToken);
+            return res.status(200).json({"message": `${user.fullname} is successfully registered`,
+                                  "user": user,
+                                    });
         } catch (error) {
             res.status(500).json({error});
         }
@@ -64,11 +75,10 @@ module.exports = {
                 await User.findByIdAndUpdate(user._id, { accessToken });
                 res.header('auth-token', accessToken).json({
                                                       "message":"Login successful",
-                                                      "user": user,
-                                                      "token": accessToken});
+                                                      "user": user});
                       
            }else{
-                return res.status(400).send(`Incorrect password or email`);
+                return res.status(400).json({"message": `Incorrect password or email`});
            }
             
         } catch (error) {
@@ -78,14 +88,16 @@ module.exports = {
 
     updateUser: async (req, res) => {
         try {
+                
                 let updatedUser = (req.body);
-                const result = await User.findByIdAndUpdate(req.userID, {$set: updatedUser}, {upsert: true});
-
-                res.status(200).json({result});
+                const user = await User.findByIdAndUpdate(req.user_ID, {$set: updatedUser}, {upsert: true});
+                var text = `Dear ${user.fullname}! \n\n` +  `Your account has been successfully updated`;
+                await mail(user.email, "Account Update", text);
+                return res.status(200).json({"message": `${user.email} successfully updated`,
+                                      "user": user});
             
         } catch (error) {
-            res.status(503).send(error);
-            console.log(error);
+            res.status(503).json(error);
         }
     },
 
@@ -106,7 +118,7 @@ module.exports = {
                 "Body": post.description
                 })
         } catch (error) {
-            res.status(500).send(error);
+            res.status(500).json(error);
         }
        
     }

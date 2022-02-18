@@ -75,7 +75,8 @@ module.exports = {
                 await User.findByIdAndUpdate(user._id, { accessToken });
                 res.header('auth-token', accessToken).json({
                                                       "message":"Login successful",
-                                                      "user": user});
+                                                      "user": user,
+                                                      });
                       
            }else{
                 return res.status(400).json({"message": `Incorrect password or email`});
@@ -90,10 +91,10 @@ module.exports = {
         try {
                 
                 let updatedUser = (req.body);
-                const user = await User.findByIdAndUpdate(req.user_ID, {$set: updatedUser}, {upsert: true});
+                const user = await User.findByIdAndUpdate(req.userID, {$set: updatedUser}, {upsert: true});
                 var text = `Dear ${user.fullname}! \n\n` +  `Your account has been successfully updated`;
                 await mail(user.email, "Account Update", text);
-                return res.status(200).json({"message": `${user.email} successfully updated`,
+                return res.status(200).json({"message": `Update successful`,
                                       "user": user});
             
         } catch (error) {

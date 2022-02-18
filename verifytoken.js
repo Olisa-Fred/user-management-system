@@ -1,5 +1,4 @@
 const jwt = require('jsonwebtoken');
-const User = require('./models/User');
 require('dotenv').config();
 
 const auth = async (req, res, next) => {
@@ -13,13 +12,12 @@ const auth = async (req, res, next) => {
                 error: "JWT token has expired, please login to obtain a new one"
             });
         }else{
-            req.userID = await User.findById(userId);
+            req.userID = userId;
             next();
         }
         
     } catch (error) {
             res.status(400).send('Invalid token');
-            console.log(error);
     }
 
 }
